@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ChatbotPage extends StatefulWidget {
-  const ChatbotPage({super.key});
+  final String userName;
+  const ChatbotPage({super.key, required this.userName});
 
   @override
   _ChatbotPageState createState() => _ChatbotPageState();
@@ -11,47 +12,79 @@ class ChatbotPage extends StatefulWidget {
 class _ChatbotPageState extends State<ChatbotPage> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, String>> messages = [];
+  String? selectedFileName;
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
       setState(() {
         messages.add({"sender": "user", "text": _controller.text});
         messages.add({"sender": "bot", "text": "I'm still learning! 😊"});
+        _controller.clear();
       });
-      _controller.clear();
+    } else if (selectedFileName != null) {
+      // Send file message
+      setState(() {
+        messages.add({
+          "sender": "user",
+          "text": "📂 Uploaded: $selectedFileName",
+        });
+        selectedFileName = null; // Reset after sending
+      });
     }
   }
 
-  void _onItemTapped(int index) {
-    if (index == 0) {
-      // Navigate to Home Page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-    } else if (index != 2) {
-      // Go back to previous page for other navigation items
-      Navigator.pop(context);
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      setState(() {
+        selectedFileName = result.files.single.name;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("AI Chatbot")),
+      appBar: AppBar(
+        title: Text("AI Chatbot"),
+        backgroundColor: Colors.blue,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade400, Colors.blue.shade700],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Hey ${widget.userName}, how can I help? 🤖",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade800,
+                ),
+              ),
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: messages.length,
               itemBuilder: (context, index) {
-                return Container(
+                return Align(
                   alignment:
                       messages[index]["sender"] == "user"
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color:
@@ -67,41 +100,44 @@ class _ChatbotPageState extends State<ChatbotPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: "Type a message...",
-                      border: OutlineInputBorder(),
+            padding: const EdgeInsets.all(10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.attach_file, color: Colors.blue),
+                    onPressed: _pickFile,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: selectedFileName ?? "Type a message...",
+                        border: InputBorder.none,
+                      ),
+                      onSubmitted: (_) => _sendMessage(), // Send on enter
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send, color: Colors.blue),
-                  onPressed: _sendMessage,
-                ),
-              ],
+                  IconButton(
+                    icon: Icon(Icons.send, color: Colors.blue),
+                    onPressed: _sendMessage,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.medical_services),
-            label: 'Consult',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chatbot'),
-          BottomNavigationBarItem(icon: Icon(Icons.article), label: 'Articles'),
-        ],
-        currentIndex: 2, // Since we're on the Chatbot page
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
       ),
     );
   }

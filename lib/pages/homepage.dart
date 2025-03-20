@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'chatbot.dart';
+import 'pharmacy.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,10 +15,14 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     if (index == 2) {
       // If Chatbot is selected, navigate to ChatbotPage
-      Navigator.push(
+    Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ChatbotPage()),
+        MaterialPageRoute(
+          builder: (context) => ChatbotPage(userName: "vivek"),
+        ), 
       );
+
+
     } else {
       setState(() {
         _selectedIndex = index;
@@ -177,13 +182,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
+  //chatbot and pharmacy
+Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
     return GestureDetector(
       onTap: () {
         if (title == "Chatbot") {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatbotPage(userName: "Vivek"),
+            ), 
+          );
+
+        } else if (title == "Pharmacy") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ChatbotPage()),
+            MaterialPageRoute(builder: (context) => PharmacyPage()),
           );
         } else if (pageIndex != null) {
           setState(() {
@@ -207,6 +221,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 
   // 🔹 Optimized Article Cards
   Widget _buildArticleCard(String title, String imagePath) {
