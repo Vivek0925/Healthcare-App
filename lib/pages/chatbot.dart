@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class ChatbotPage extends StatefulWidget {
   final String userName;
@@ -11,8 +12,8 @@ class ChatbotPage extends StatefulWidget {
 
 class _ChatbotPageState extends State<ChatbotPage> {
   final TextEditingController _controller = TextEditingController();
-  List<Map<String, String>> messages = [];
-  String? selectedFileName;
+  List<Map<String, dynamic>> messages = [];
+  File? selectedImageFile;
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
@@ -21,23 +22,21 @@ class _ChatbotPageState extends State<ChatbotPage> {
         messages.add({"sender": "bot", "text": "I'm still learning! 😊"});
         _controller.clear();
       });
-    } else if (selectedFileName != null) {
-      // Send file message
+    } else if (selectedImageFile != null) {
       setState(() {
-        messages.add({
-          "sender": "user",
-          "text": "📂 Uploaded: $selectedFileName",
-        });
-        selectedFileName = null; // Reset after sending
+        messages.add({"sender": "user", "image": selectedImageFile});
+        selectedImageFile = null;
       });
     }
   }
 
   Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    if (result != null && result.files.single.path != null) {
       setState(() {
-        selectedFileName = result.files.single.name;
+        selectedImageFile = File(result.files.single.path!);
       });
     }
   }
@@ -78,29 +77,57 @@ class _ChatbotPageState extends State<ChatbotPage> {
             child: ListView.builder(
               itemCount: messages.length,
               itemBuilder: (context, index) {
+                var message = messages[index];
+                bool isUser = message["sender"] == "user";
+
                 return Align(
                   alignment:
-                      messages[index]["sender"] == "user"
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color:
-                          messages[index]["sender"] == "user"
-                              ? Colors.blue[200]
-                              : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient(
+                        colors:
+                            isUser
+                                ? [
+                                  Colors.blue.shade900,
+                                  Colors.white,
+                                ] // Dark Blue → White
+                                : [
+                                  Colors.black,
+                                  Colors.blue.shade700,
+                                ], // Black → Not Too Dark Blue
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(messages[index]["text"] ?? ""),
+                    child:
+                        message.containsKey("image")
+                            ? Image.file(
+                              message["image"],
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            )
+                            : Text(
+                              message["text"] ?? "",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Text remains white
+                              ),
+                            ),
                   ),
                 );
               },
             ),
           ),
+
+          // Input Bar
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -123,10 +150,13 @@ class _ChatbotPageState extends State<ChatbotPage> {
                     child: TextField(
                       controller: _controller,
                       decoration: InputDecoration(
-                        hintText: selectedFileName ?? "Type a message...",
+                        hintText:
+                            selectedImageFile != null
+                                ? "📂 Image selected"
+                                : "Ask me something",
                         border: InputBorder.none,
                       ),
-                      onSubmitted: (_) => _sendMessage(), // Send on enter
+                      onSubmitted: (_) => _sendMessage(),
                     ),
                   ),
                   IconButton(

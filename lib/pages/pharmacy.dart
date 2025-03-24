@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'homepage.dart';
+import 'chatbot.dart';
+import 'consultation.dart'; // Import Chatbot Page
+// Import Consultation Page
 
-class PharmacyPage extends StatelessWidget {
+class PharmacyPage extends StatelessWidget { 
   const PharmacyPage({super.key});
 
-  // 🔹 Function to Open Netmeds URL
+  // Function to Open Netmeds URL
   void _openNetmeds() async {
     final Uri url = Uri.parse('https://www.netmeds.com/');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -36,14 +39,14 @@ class PharmacyPage extends StatelessWidget {
             ),
             SizedBox(height: 15),
 
-            // 🔹 Medicine List with Stylish Cards
+            // Medicine List with Stylish Cards
             Expanded(
               child: ListView(
                 children: [
                   _buildMedicineCard(
                     "Paracetamol",
                     "Used to treat fever and mild pain.",
-                    "assets/paracetamol.jpg",
+                    "assets/Paracetamol.jpg",
                   ),
                   _buildMedicineCard(
                     "Ibuprofen",
@@ -69,7 +72,7 @@ class PharmacyPage extends StatelessWidget {
         ),
       ),
 
-      // 🔹 Modern Bottom Navigation Bar
+      // ✅ Fixed Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -79,11 +82,11 @@ class PharmacyPage extends StatelessWidget {
           ),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chatbot'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_pharmacy),
-            label: 'Pharmacy',
-          ),
+            icon: Icon(Icons.article),
+            label: 'Articles',
+          ), // ✅ FIXED: Replaced Pharmacy with Article
         ],
-        currentIndex: 3, // Since we're on the Pharmacy page
+        currentIndex: 3, // ✅ FIXED: Set correct index for Article Page
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
@@ -94,13 +97,27 @@ class PharmacyPage extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
             );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ConsultationPage(),
+              ), // ✅ FIXED: Opens Consultation Page
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatbotPage(userName: "User"),
+              ), // ✅ FIXED: Opens Chatbot Page
+            );
           }
         },
       ),
     );
   }
 
-  // 🔹 Medicine Card Widget with Enhanced Design
+  // Medicine Card Widget with Enhanced Design
   Widget _buildMedicineCard(
     String name,
     String description,

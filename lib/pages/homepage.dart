@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'chatbot.dart';
 import 'pharmacy.dart';
+import 'consultation.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,16 +14,16 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == 2) {
-      // If Chatbot is selected, navigate to ChatbotPage
-    Navigator.push(
+    if (index == 1) {
+      Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ChatbotPage(userName: "vivek"),
-        ), 
+        MaterialPageRoute(builder: (context) => ConsultationPage()),
       );
-
-
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatbotPage(userName: "Vivek")),
+      );
     } else {
       setState(() {
         _selectedIndex = index;
@@ -33,18 +34,19 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Background color changed to white
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Top Section - Light Blue Gradient
+            // 🔹 Gradient Header Removed - Now White Background
             Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Color(0xFFB3E5FC), // Light blue
-                    Color(0xFF81D4FA), // Slightly deeper blue
+                    Color.fromARGB(255, 18, 21, 58), // Black
+                    Color.fromARGB(255, 15, 49, 107), // Deep Dark Blue
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -71,28 +73,34 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(height: 10),
                   Text(
                     "Welcome!",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ), // Changed to black for contrast
                   ),
                   Text(
                     "Ruchita",
-                    style: TextStyle(fontSize: 18, color: Colors.black54),
+                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                   ),
                   SizedBox(height: 5),
                   Text(
                     "How is it going today?",
-                    style: TextStyle(fontSize: 16, color: Colors.black38),
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   SizedBox(height: 20),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.grey[200], // Light grey for input field
                       borderRadius: BorderRadius.circular(10),
                     ),
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: TextField(
+                      style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
-                        icon: Icon(Icons.search),
+                        icon: Icon(Icons.search, color: Colors.grey),
                         hintText: "Search doctor, drugs, articles...",
+                        hintStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
                       ),
                     ),
@@ -108,22 +116,14 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _quickActionCard(
-                    Icons.chat_bubble,
-                    "Chatbot",
-                    2,
-                  ), // Redirects to chatbot
-                  _quickActionCard(
-                    Icons.local_pharmacy,
-                    "Pharmacy",
-                    null,
-                  ), // No redirection
+                  _quickActionCard(Icons.chat_bubble, "Chatbot", 2),
+                  _quickActionCard(Icons.local_pharmacy, "Pharmacy", null),
                 ],
               ),
             ),
             SizedBox(height: 20),
 
-            // 🔹 Health Articles Section (Restored)
+            // 🔹 Health Articles Section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -131,9 +131,13 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     "Health Articles",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                  Text("See all", style: TextStyle(color: Colors.blue)),
+                  Text("See all", style: TextStyle(color: Colors.blueAccent)),
                 ],
               ),
             ),
@@ -148,7 +152,7 @@ class _HomePageState extends State<HomePage> {
               "assets/covid.png",
             ),
 
-            // 🔹 Additional Options (Restored)
+            // 🔹 Additional Options
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -165,6 +169,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white, // Changed from black to white
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
@@ -175,25 +180,24 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.article), label: 'Articles'),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
     );
   }
 
-  //chatbot and pharmacy
-Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
+  // 🔹 Chatbot & Pharmacy Quick Access
+  Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
     return GestureDetector(
       onTap: () {
         if (title == "Chatbot") {
-        Navigator.push(
+          Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatbotPage(userName: "Vivek"),
-            ), 
+            ),
           );
-
         } else if (title == "Pharmacy") {
           Navigator.push(
             context,
@@ -206,15 +210,16 @@ Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
         }
       },
       child: Card(
-        elevation: 3,
+        elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        color: Colors.white,
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           child: Column(
             children: [
-              Icon(icon, size: 24, color: Colors.blue),
+              Icon(icon, size: 24, color: Colors.blueAccent),
               SizedBox(height: 5),
-              Text(title, style: TextStyle(fontSize: 12)),
+              Text(title, style: TextStyle(fontSize: 12, color: Colors.black)),
             ],
           ),
         ),
@@ -222,12 +227,12 @@ Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
     );
   }
 
-
-  // 🔹 Optimized Article Cards
+  // 🔹 Article Cards
   Widget _buildArticleCard(String title, String imagePath) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Card(
+        color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         elevation: 5,
         child: Column(
@@ -240,25 +245,17 @@ Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
                 height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 150,
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: Text(
-                        "Image Not Found",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  );
-                },
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Text(
                 title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
           ],
@@ -267,13 +264,14 @@ Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
     );
   }
 
-  // 🔹 Menu Options for Additional Features
+  // 🔹 Menu Options
   Widget _menuOption(IconData icon, String title) {
     return Card(
+      color: Colors.white,
       child: ListTile(
-        leading: Icon(icon, color: Colors.blue),
-        title: Text(title),
-        trailing: Icon(Icons.arrow_forward_ios, size: 18),
+        leading: Icon(icon, color: Colors.blueAccent),
+        title: Text(title, style: TextStyle(color: Colors.black)),
+        trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
       ),
     );
   }
