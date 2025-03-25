@@ -1,96 +1,120 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'homepage.dart';
 import 'chatbot.dart';
-import 'consultation.dart'; // Import Chatbot Page
-// Import Consultation Page
+import 'consultation.dart';
 
-class PharmacyPage extends StatelessWidget { 
+class PharmacyPage extends StatefulWidget {
   const PharmacyPage({super.key});
 
-  // Function to Open Netmeds URL
-  void _openNetmeds() async {
-    final Uri url = Uri.parse('https://www.netmeds.com/');
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw 'Could not launch $url';
-    }
-  }
+  @override
+  _PharmacyPageState createState() => _PharmacyPageState();
+}
+
+class _PharmacyPageState extends State<PharmacyPage> {
+  final TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> medicines = [
+    {
+      "name": "Paracetamol",
+      "category": "Pain Relief",
+      "color": Colors.blue.shade100,
+      "expanded": false,
+      "description": "Used to treat fever and mild pain.",
+    },
+    {
+      "name": "Amoxicillin",
+      "category": "Antibiotics",
+      "color": Colors.green.shade100,
+      "expanded": false,
+      "description": "Used to treat bacterial infections.",
+    },
+    {
+      "name": "Omeprazole",
+      "category": "Digestive",
+      "color": Colors.orange.shade100,
+      "expanded": false,
+      "description": "Reduces stomach acid and prevents ulcers.",
+    },
+    {
+      "name": "Metformin",
+      "category": "Diabetes",
+      "color": Colors.pink.shade100,
+      "expanded": false,
+      "description": "Helps control blood sugar levels.",
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Pharmacy", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.blueAccent,
-        elevation: 4,
+        title: Text(
+          "Pharmacy",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Available Medicines",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+            // 🔹 Search Bar
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: "🔍 Search for medicines...",
+                  border: InputBorder.none,
+                ),
+                onChanged: (query) {
+                  setState(() {});
+                },
               ),
             ),
             SizedBox(height: 15),
 
-            // Medicine List with Stylish Cards
+            Text(
+              "Common Medicines",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+
+            // 🔹 Medicine List (Expandable)
             Expanded(
-              child: ListView(
-                children: [
-                  _buildMedicineCard(
-                    "Paracetamol",
-                    "Used to treat fever and mild pain.",
-                    "assets/Paracetamol.jpg",
-                  ),
-                  _buildMedicineCard(
-                    "Ibuprofen",
-                    "Pain reliever and anti-inflammatory.",
-                    "assets/ibuprofen.jpg",
-                  ),
-                  _buildMedicineCard(
-                    "Vitamin C",
-                    "Boosts immunity and improves skin health.",
-                    "assets/vitamin_c.jpg",
-                  ),
-                  _buildMedicineCard(
-                    "Order from Netmeds",
-                    "Click here to order medicine online.",
-                    "assets/netmeds_logo.png",
-                    isNetmeds: true, // Special button-like card for Netmeds
-                    onTap: _openNetmeds,
-                  ),
-                ],
+              child: ListView.builder(
+                itemCount: medicines.length,
+                itemBuilder: (context, index) {
+                  var medicine = medicines[index];
+                  bool matchesSearch =
+                      _searchController.text.isEmpty ||
+                      medicine["name"].toLowerCase().contains(
+                        _searchController.text.toLowerCase(),
+                      );
+
+                  if (!matchesSearch) return SizedBox.shrink();
+
+                  return _buildMedicineCard(medicine, index);
+                },
               ),
             ),
           ],
         ),
       ),
 
-      // ✅ Fixed Bottom Navigation Bar
+      // 🔹 Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.medical_services),
-            label: 'Consult',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chatbot'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.article),
-            label: 'Articles',
-          ), // ✅ FIXED: Replaced Pharmacy with Article
-        ],
-        currentIndex: 3, // ✅ FIXED: Set correct index for Article Page
+        currentIndex: 2, // ✅ "Pharmacy" Active
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           if (index == 0) {
             Navigator.pushReplacement(
@@ -100,92 +124,76 @@ class PharmacyPage extends StatelessWidget {
           } else if (index == 1) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => ConsultationPage(),
-              ), // ✅ FIXED: Opens Consultation Page
+              MaterialPageRoute(builder: (context) => ConsultationPage()),
             );
-          } else if (index == 2) {
+          } else if (index == 3) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => ChatbotPage(userName: "User"),
-              ), // ✅ FIXED: Opens Chatbot Page
+              ),
             );
           }
         },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chatbot'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_pharmacy),
+            label: 'Pharmacy',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.article), label: 'Articles'),
+        ],
       ),
     );
   }
 
-  // Medicine Card Widget with Enhanced Design
-  Widget _buildMedicineCard(
-    String name,
-    String description,
-    String imagePath, {
-    bool isNetmeds = false,
-    Function()? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: EdgeInsets.symmetric(vertical: 10),
-        color: isNetmeds ? Colors.blueAccent : Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  imagePath,
-                  width: 70,
-                  height: 70,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      Icons.broken_image,
-                      size: 70,
-                      color: Colors.grey,
-                    );
-                  },
-                ),
+  // 🔹 Medicine Card Widget
+  Widget _buildMedicineCard(Map<String, dynamic> medicine, int index) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      child: ExpansionTile(
+        title: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: medicine["color"],
+              child: Icon(Icons.medical_services, color: Colors.white),
+            ),
+            SizedBox(width: 10),
+            Text(
+              medicine["name"],
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(left: 50.0),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: medicine["color"],
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              medicine["category"],
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: isNetmeds ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isNetmeds ? Colors.white70 : Colors.grey[800],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (isNetmeds)
-                Icon(
-                  Icons.open_in_new,
-                  color: Colors.white,
-                ), // Netmeds button icon
-              if (!isNetmeds)
-                Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
-            ],
+            ),
           ),
         ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Text(
+              medicine["description"],
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+          ),
+        ],
       ),
     );
   }

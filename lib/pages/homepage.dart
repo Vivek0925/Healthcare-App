@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'chatbot.dart';
-import 'pharmacy.dart';
 import 'consultation.dart';
+import 'articles.dart';
+import 'pharmacy.dart'; // Ensure this exists
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,18 +14,56 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  // 🔹 Article Card Widget
+  Widget _buildArticleCard(String title, String description) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 5),
+              Text(
+                description,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   void _onItemTapped(int index) {
     if (index == 1) {
+      // Navigate to Consultation Page
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ConsultationPage()),
       );
     } else if (index == 2) {
+      // Navigate to Chatbot Page
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ChatbotPage(userName: "Vivek")),
+        MaterialPageRoute(builder: (context) => ChatbotPage(userName: "User")),
+      );
+    } else if (index == 3) {
+      // Navigate to Articles Page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ArticlesPage()),
       );
     } else {
+      // Stay on Home Page
       setState(() {
         _selectedIndex = index;
       });
@@ -34,20 +73,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background color changed to white
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Gradient Header Removed - Now White Background
+            // 🔹 Gradient Header
             Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 18, 21, 58), // Black
-                    Color.fromARGB(255, 15, 49, 107), // Deep Dark Blue
-                  ],
+                  colors: [Colors.blue.shade600, Colors.blue.shade300],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -63,46 +99,45 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage('assets/user.jpg'),
-                        radius: 30,
+                      Text(
+                        "Good Evening,",
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
-                      Icon(Icons.notifications, size: 30, color: Colors.black),
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.person, color: Colors.blueAccent),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 10),
                   Text(
-                    "Welcome!",
+                    "User",
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ), // Changed to black for contrast
+                      color: Colors.white,
+                    ),
                   ),
-                  Text(
-                    "Ruchita",
-                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    "How is it going today?",
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[200], // Light grey for input field
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: TextField(
-                      style: TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.search, color: Colors.grey),
-                        hintText: "Search doctor, drugs, articles...",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: InputBorder.none,
-                      ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.search, color: Colors.grey),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: "Search for symptoms, medicines...",
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        Icon(Icons.mic, color: Colors.blueAccent),
+                      ],
                     ),
                   ),
                 ],
@@ -110,66 +145,99 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 20),
 
-            // 🔹 Quick Access Buttons (Chatbot & Pharmacy)
+            // 🔹 Services Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                "Services",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _quickActionCard(Icons.chat_bubble, "Chatbot", 2),
-                  _quickActionCard(Icons.local_pharmacy, "Pharmacy", null),
+                  _serviceCard(
+                    Icons.chat,
+                    "AI Chatbot",
+                    ChatbotPage(userName: "User"),
+                  ),
+                  _serviceCard(
+                    Icons.local_pharmacy,
+                    "Pharmacy",
+                    PharmacyPage(),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _serviceCard(
+                    Icons.local_hospital,
+                    "Find Doctor",
+                    ConsultationPage(),
+                  ),
+                  _serviceCard(Icons.article, "Articles", ArticlesPage()),
                 ],
               ),
             ),
             SizedBox(height: 20),
 
-            // 🔹 Health Articles Section
+            // 🔹 Daily Health Tips
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Health Articles",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                    "Daily Health Tips",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  Text("See all", style: TextStyle(color: Colors.blueAccent)),
+                  Text("See All", style: TextStyle(color: Colors.blueAccent)),
                 ],
               ),
             ),
             SizedBox(height: 10),
+            _healthTipCard(),
 
-            _buildArticleCard(
-              "The 25 Healthiest Fruits You Can Eat",
-              "assets/fruit.jpeg",
-            ),
-            _buildArticleCard(
-              "The Impact of COVID-19 on Healthcare Systems",
-              "assets/covid.png",
-            ),
-
-            // 🔹 Additional Options
-            SizedBox(height: 20),
+            // 🔹 Latest Articles (Scrollable Section)
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _menuOption(Icons.calendar_today, "Book Appointment"),
-                  _menuOption(Icons.file_present, "View Health Records"),
-                  _menuOption(Icons.alarm, "Medication Reminders"),
-                  _menuOption(Icons.support_agent, "Contact Support"),
+                  Text(
+                    "Latest Articles",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text("See All", style: TextStyle(color: Colors.blueAccent)),
                 ],
               ),
+            ),
+            _buildArticleCard(
+              "The Importance of Regular Health Check-ups",
+              "Learn why preventive care through health screenings is essential.",
+            ),
+            _buildArticleCard(
+              "How to Boost Your Immune System Naturally",
+              "Simple habits to improve immunity and stay healthy.",
+            ),
+            _buildArticleCard(
+              "Managing Stress for a Healthier Life",
+              "Techniques to reduce stress and improve mental well-being.",
             ),
           ],
         ),
       ),
+
+      // 🔹 Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white, // Changed from black to white
+        backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
@@ -187,39 +255,23 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 🔹 Chatbot & Pharmacy Quick Access
-  Widget _quickActionCard(IconData icon, String title, int? pageIndex) {
+  // 🔹 Services Card
+  Widget _serviceCard(IconData icon, String title, Widget page) {
     return GestureDetector(
       onTap: () {
-        if (title == "Chatbot") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatbotPage(userName: "Vivek"),
-            ),
-          );
-        } else if (title == "Pharmacy") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PharmacyPage()),
-          );
-        } else if (pageIndex != null) {
-          setState(() {
-            _selectedIndex = pageIndex;
-          });
-        }
+        Navigator.push(context, MaterialPageRoute(builder: (context) => page));
       },
       child: Card(
-        elevation: 5,
+        elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: Colors.white,
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
           child: Column(
             children: [
-              Icon(icon, size: 24, color: Colors.blueAccent),
-              SizedBox(height: 5),
-              Text(title, style: TextStyle(fontSize: 12, color: Colors.black)),
+              Icon(icon, size: 30, color: Colors.blueAccent),
+              SizedBox(height: 10),
+              Text(title, style: TextStyle(fontSize: 14, color: Colors.black)),
             ],
           ),
         ),
@@ -227,51 +279,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 🔹 Article Cards
-  Widget _buildArticleCard(String title, String imagePath) {
+  // 🔹 Health Tips Card
+  Widget _healthTipCard() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Card(
-        color: Colors.white,
+        color: Colors.blue.shade200,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-              child: Image.asset(
-                imagePath,
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                title,
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("💧 Hydration", style: TextStyle(color: Colors.white)),
+              SizedBox(height: 5),
+              Text(
+                "Stay Hydrated",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 5),
+              Text(
+                "Drink at least 8 glasses of water daily to maintain good health and energy levels.",
+                style: TextStyle(fontSize: 14, color: Colors.white),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  // 🔹 Menu Options
-  Widget _menuOption(IconData icon, String title) {
-    return Card(
-      color: Colors.white,
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blueAccent),
-        title: Text(title, style: TextStyle(color: Colors.black)),
-        trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
       ),
     );
   }

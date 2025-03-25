@@ -11,7 +11,7 @@ class ConsultationPage extends StatefulWidget {
 }
 
 class _ConsultationPageState extends State<ConsultationPage> {
-  int _selectedIndex = 1; // Set "Consult" as the default selected tab
+  final int _selectedIndex = 1; // Set "Consult" as the default selected tab
 
   void _onItemTapped(int index) {
     if (index == 0) {
