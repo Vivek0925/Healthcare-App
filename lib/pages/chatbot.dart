@@ -37,7 +37,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
 
   Future<String> _generateGeminiResponse(String userPrompt) async {
     final String apiUrl =
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-exp-03-25:generateContent';
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
     try {
       final Map<String, dynamic> requestBody = {
