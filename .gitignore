@@ -58,3 +58,4 @@ pubspec.yaml.orig
 # User-specific files
 *.orig
 *.bak
+.env

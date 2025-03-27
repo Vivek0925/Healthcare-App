@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/homepage.dart';
 
-const auroraApiKey = "AIzaSyBDoEgcfE-f0ZBJFWLa8vi68TMenzT2mfg";
+const auroraApiKey = String.fromEnvironment('GEMINI_API_KEY');
 
 void main() {
   runApp(const MyApp());
