@@ -13,10 +13,10 @@ class ChatbotPage extends StatefulWidget {
   const ChatbotPage({super.key, required this.userName});
 
   @override
-  _ChatbotPageState createState() => _ChatbotPageState();
+  ChatbotPageState createState() => ChatbotPageState();
 }
 
-class _ChatbotPageState extends State<ChatbotPage>
+class ChatbotPageState extends State<ChatbotPage>
     with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -36,7 +36,7 @@ class _ChatbotPageState extends State<ChatbotPage>
 Remember to maintain patient confidentiality and avoid making definitive diagnoses.""";
 
   Future<String> _generateGeminiResponse(String userPrompt) async {
-    final String apiUrl =
+    const String apiUrl =
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
     try {
@@ -110,7 +110,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
     }
@@ -174,7 +174,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Healthcare Assistant",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
@@ -182,7 +182,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Colors.blueAccent),
+            icon: const Icon(Icons.refresh, color: Colors.blueAccent),
             onPressed: () {},
           ),
         ],
@@ -191,7 +191,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
           labelColor: Colors.blueAccent,
           unselectedLabelColor: Colors.grey,
           indicatorColor: Colors.blueAccent,
-          tabs: [Tab(text: "Chat"), Tab(text: "History")],
+          tabs: const [Tab(text: "Chat"), Tab(text: "History")],
         ),
       ),
 
@@ -219,21 +219,21 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
             );
           } else if (index == 1) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ConsultationPage()),
+              MaterialPageRoute(builder: (context) => const ConsultationPage()),
             );
           } else if (index == 3) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ArticlesPage()),
+              MaterialPageRoute(builder: (context) => const ArticlesPage()),
             );
           }
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_hospital),
@@ -259,13 +259,13 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
                 return Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: EdgeInsets.all(12),
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
@@ -300,8 +300,8 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
                     maxWidth: MediaQuery.of(context).size.width * 0.75,
                   ),
                   child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: EdgeInsets.all(12),
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isUser ? Colors.blueAccent : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(12),
@@ -333,7 +333,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
 
   // 🔹 History Screen UI
   Widget _historyScreen() {
-    return Center(
+    return const Center(
       child: Text(
         "No chat history available",
         style: TextStyle(color: Colors.grey, fontSize: 16),
@@ -349,7 +349,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 8,
@@ -360,7 +360,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
         child: Row(
           children: [
             IconButton(
-              icon: Icon(Icons.attach_file, color: Colors.blue),
+              icon: const Icon(Icons.attach_file, color: Colors.blue),
               onPressed: _pickFile,
             ),
             Expanded(
@@ -377,7 +377,7 @@ Remember to maintain patient confidentiality and avoid making definitive diagnos
               ),
             ),
             IconButton(
-              icon: Icon(Icons.send, color: Colors.blue),
+              icon: const Icon(Icons.send, color: Colors.blue),
               onPressed: _sendMessage,
             ),
           ],

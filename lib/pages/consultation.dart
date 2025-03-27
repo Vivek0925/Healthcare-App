@@ -7,27 +7,27 @@ class ConsultationPage extends StatefulWidget {
   const ConsultationPage({super.key});
 
   @override
-  _ConsultationPageState createState() => _ConsultationPageState();
+  ConsultationPageState createState() => ConsultationPageState();
 }
 
-class _ConsultationPageState extends State<ConsultationPage> {
+class ConsultationPageState extends State<ConsultationPage> {
   final int _selectedIndex = 1; // Set "Consult" as the default selected tab
 
   void _onItemTapped(int index) {
     if (index == 0) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } else if (index == 2) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ChatbotPage(userName: "Vivek")),
+        MaterialPageRoute(builder: (context) => const ChatbotPage(userName: "Vivek")),
       );
     } else if (index == 3) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => PharmacyPage()),
+        MaterialPageRoute(builder: (context) => const PharmacyPage()),
       );
     }
   }
@@ -36,7 +36,7 @@ class _ConsultationPageState extends State<ConsultationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Consultation",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -49,9 +49,9 @@ class _ConsultationPageState extends State<ConsultationPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.local_hospital, size: 80, color: Colors.blueAccent),
-              SizedBox(height: 20),
-              Text(
+              const Icon(Icons.local_hospital, size: 80, color: Colors.blueAccent),
+              const SizedBox(height: 20),
+              const Text(
                 "Consult a Doctor",
                 style: TextStyle(
                   fontSize: 22,
@@ -59,25 +59,25 @@ class _ConsultationPageState extends State<ConsultationPage> {
                   color: Colors.blueAccent,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 "Get expert medical advice from our professional doctors. Book an appointment now!",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   // Add navigation to booking page if needed
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   "Book an Appointment",
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),

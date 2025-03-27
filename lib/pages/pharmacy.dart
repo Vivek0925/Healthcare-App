@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../models/medicine.dart';
 import 'homepage.dart';
 import 'chatbot.dart';
 import 'consultation.dart';
@@ -7,71 +9,113 @@ class PharmacyPage extends StatefulWidget {
   const PharmacyPage({super.key});
 
   @override
-  _PharmacyPageState createState() => _PharmacyPageState();
+  PharmacyPageState createState() => PharmacyPageState();
 }
 
-class _PharmacyPageState extends State<PharmacyPage> {
+class PharmacyPageState extends State<PharmacyPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> medicines = [
-    {
-      "name": "Paracetamol",
-      "category": "Pain Relief",
-      "color": Colors.blue.shade100,
-      "expanded": false,
-      "description": "Used to treat fever and mild pain.",
-    },
-    {
-      "name": "Amoxicillin",
-      "category": "Antibiotics",
-      "color": Colors.green.shade100,
-      "expanded": false,
-      "description": "Used to treat bacterial infections.",
-    },
-    {
-      "name": "Omeprazole",
-      "category": "Digestive",
-      "color": Colors.orange.shade100,
-      "expanded": false,
-      "description": "Reduces stomach acid and prevents ulcers.",
-    },
-    {
-      "name": "Metformin",
-      "category": "Diabetes",
-      "color": Colors.pink.shade100,
-      "expanded": false,
-      "description": "Helps control blood sugar levels.",
-    },
-  ];
+  List<Medicine> medicines = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadMedicines();
+  }
+
+  void loadMedicines() {
+    setState(() {
+      medicines = Medicine.getCommonIndianMedicines();
+      isLoading = false;
+    });
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
+  // Helper method to get appropriate icon for medicine type
+  IconData _getMedicineTypeIcon(String medicineType) {
+    switch (medicineType.toLowerCase()) {
+      case 'tablet':
+        return Icons.medication_rounded;
+      case 'syrup':
+        return Icons.local_drink_rounded;
+      case 'capsule':
+        return Icons.egg_alt_rounded;
+      case 'injection':
+        return Icons.vaccines;
+      case 'spray':
+        return Icons.cleaning_services_rounded;
+      case 'solution':
+        return Icons.opacity_rounded;
+      case 'gel':
+        return Icons.water_drop_rounded;
+      case 'cream':
+        return Icons.spa_rounded;
+      case 'powder':
+        return Icons.grain_rounded;
+      default:
+        return Icons.medication_liquid_rounded;
+    }
+  }
+
+  // Helper method to get color for medicine type icon
+  Color _getMedicineTypeColor(String medicineType) {
+    switch (medicineType.toLowerCase()) {
+      case 'tablet':
+        return Colors.blue;
+      case 'syrup':
+        return Colors.purple;
+      case 'capsule':
+        return Colors.orange;
+      case 'injection':
+        return Colors.red;
+      case 'spray':
+        return Colors.teal;
+      case 'solution':
+        return Colors.cyan;
+      case 'gel':
+        return Colors.indigo;
+      case 'cream':
+        return Colors.pink;
+      case 'powder':
+        return Colors.amber;
+      default:
+        return Colors.green;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Pharmacy",
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Search Bar
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: TextField(
                 controller: _searchController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "🔍 Search for medicines...",
                   border: InputBorder.none,
                 ),
@@ -80,62 +124,207 @@ class _PharmacyPageState extends State<PharmacyPage> {
                 },
               ),
             ),
-            SizedBox(height: 15),
-
-            Text(
-              "Common Medicines",
+            const SizedBox(height: 15),
+            const Text(
+              "Available Medicines",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
-
-            // 🔹 Medicine List (Expandable)
+            const SizedBox(height: 10),
             Expanded(
-              child: ListView.builder(
-                itemCount: medicines.length,
-                itemBuilder: (context, index) {
-                  var medicine = medicines[index];
-                  bool matchesSearch =
-                      _searchController.text.isEmpty ||
-                      medicine["name"].toLowerCase().contains(
-                        _searchController.text.toLowerCase(),
-                      );
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: medicines.length,
+                      itemBuilder: (context, index) {
+                        var medicine = medicines[index];
+                        bool matchesSearch = _searchController.text.isEmpty ||
+                            medicine.name
+                                .toLowerCase()
+                                .contains(_searchController.text.toLowerCase());
 
-                  if (!matchesSearch) return SizedBox.shrink();
+                        if (!matchesSearch) return const SizedBox.shrink();
 
-                  return _buildMedicineCard(medicine, index);
-                },
-              ),
+                        final Color iconColor =
+                            _getMedicineTypeColor(medicine.medicineType);
+                        final IconData iconData =
+                            _getMedicineTypeIcon(medicine.medicineType);
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(15),
+                            onTap: () {},
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Medicine Type Icon
+                                  Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      color: iconColor.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        iconData,
+                                        size: 48,
+                                        color: iconColor,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+
+                                  // Medicine details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                medicine.name,
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              '₹${medicine.price.toStringAsFixed(2)}',
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'By ${medicine.manufacturer}',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            Chip(
+                                              label: Text(medicine.category),
+                                              backgroundColor: Colors.blue[100],
+                                              labelPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 4),
+                                              padding: const EdgeInsets.all(0),
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Chip(
+                                              label: Text(
+                                                medicine.medicineType
+                                                    .toUpperCase(),
+                                                style: const TextStyle(fontSize: 12),
+                                              ),
+                                              backgroundColor:
+                                                  iconColor.withOpacity(0.2),
+                                              labelPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 4),
+                                              padding: const EdgeInsets.all(0),
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          medicine.description,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: OutlinedButton.icon(
+                                                icon: const Icon(Icons.shopping_cart),
+                                                label: const Text('Add to Cart'),
+                                                style: OutlinedButton.styleFrom(
+                                                  foregroundColor: Colors.blue,
+                                                ),
+                                                onPressed: () {},
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: ElevatedButton.icon(
+                                                icon: const Icon(Icons
+                                                    .shopping_bag_outlined),
+                                                label: const Text('Buy Now'),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.blue,
+                                                ),
+                                                onPressed: () =>
+                                                    _launchURL(medicine.buyUrl),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
       ),
-
-      // 🔹 Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // ✅ "Pharmacy" Active
+        currentIndex: 2,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         onTap: (index) {
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
             );
           } else if (index == 1) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ConsultationPage()),
+              MaterialPageRoute(builder: (context) => const ConsultationPage()),
             );
           } else if (index == 3) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => ChatbotPage(userName: "User"),
+                builder: (context) => const ChatbotPage(userName: "User"),
               ),
             );
           }
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chatbot'),
           BottomNavigationBarItem(
@@ -143,56 +332,6 @@ class _PharmacyPageState extends State<PharmacyPage> {
             label: 'Pharmacy',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.article), label: 'Articles'),
-        ],
-      ),
-    );
-  }
-
-  // 🔹 Medicine Card Widget
-  Widget _buildMedicineCard(Map<String, dynamic> medicine, int index) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 3,
-      child: ExpansionTile(
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: medicine["color"],
-              child: Icon(Icons.medical_services, color: Colors.white),
-            ),
-            SizedBox(width: 10),
-            Text(
-              medicine["name"],
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(left: 50.0),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: medicine["color"],
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              medicine["category"],
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: Text(
-              medicine["description"],
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-            ),
-          ),
         ],
       ),
     );

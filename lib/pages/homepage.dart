@@ -8,29 +8,29 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   // 🔹 Article Card Widget
   Widget _buildArticleCard(String title, String description) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Padding(
-          padding: EdgeInsets.all(15),
+          padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Text(
                 description,
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
@@ -48,19 +48,19 @@ class _HomePageState extends State<HomePage> {
       // Navigate to Consultation Page
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ConsultationPage()),
+        MaterialPageRoute(builder: (context) => const ConsultationPage()),
       );
     } else if (index == 2) {
       // Navigate to Chatbot Page
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ChatbotPage(userName: "User")),
+        MaterialPageRoute(builder: (context) => const ChatbotPage(userName: "User")),
       );
     } else if (index == 3) {
       // Navigate to Articles Page
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ArticlesPage()),
+        MaterialPageRoute(builder: (context) => const ArticlesPage()),
       );
     } else {
       // Stay on Home Page
@@ -80,14 +80,14 @@ class _HomePageState extends State<HomePage> {
           children: [
             // 🔹 Gradient Header
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.blue.shade600, Colors.blue.shade300],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 ),
@@ -95,8 +95,8 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 40),
-                  Row(
+                  const SizedBox(height: 40),
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  Text(
+                  const Text(
                     "User",
                     style: TextStyle(
                       fontSize: 24,
@@ -117,14 +117,14 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: const Row(
                       children: [
                         Icon(Icons.search, color: Colors.grey),
                         SizedBox(width: 10),
@@ -143,53 +143,53 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // 🔹 Services Section
-            Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 "Services",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _serviceCard(
                     Icons.chat,
                     "AI Chatbot",
-                    ChatbotPage(userName: "User"),
+                    const ChatbotPage(userName: "User"),
                   ),
                   _serviceCard(
                     Icons.local_pharmacy,
                     "Pharmacy",
-                    PharmacyPage(),
+                    const PharmacyPage(),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _serviceCard(
                     Icons.local_hospital,
                     "Find Doctor",
-                    ConsultationPage(),
+                    const ConsultationPage(),
                   ),
-                  _serviceCard(Icons.article, "Articles", ArticlesPage()),
+                  _serviceCard(Icons.article, "Articles", const ArticlesPage()),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // 🔹 Daily Health Tips
-            Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,11 +202,11 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _healthTipCard(),
 
             // 🔹 Latest Articles (Scrollable Section)
-            Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -266,12 +266,12 @@ class _HomePageState extends State<HomePage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: Colors.white,
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
           child: Column(
             children: [
               Icon(icon, size: 30, color: Colors.blueAccent),
-              SizedBox(height: 10),
-              Text(title, style: TextStyle(fontSize: 14, color: Colors.black)),
+              const SizedBox(height: 10),
+              Text(title, style: const TextStyle(fontSize: 14, color: Colors.black)),
             ],
           ),
         ),
@@ -282,11 +282,11 @@ class _HomePageState extends State<HomePage> {
   // 🔹 Health Tips Card
   Widget _healthTipCard() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
         color: Colors.blue.shade200,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Padding(
+        child: const Padding(
           padding: EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/homepage.dart';
 
-final auroraApiKey = " AIzaSyBDoEgcfE-f0ZBJFWLa8vi68TMenzT2mfg";
+const auroraApiKey = "AIzaSyBDoEgcfE-f0ZBJFWLa8vi68TMenzT2mfg";
 
 void main() {
   runApp(const MyApp());
